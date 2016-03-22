@@ -1,0 +1,52 @@
+version: '2'
+services:
+    apache:
+        build: images/apache
+        links:
+            - php55:php55
+            - php56:php56
+            - php70:php70
+        volumes_from:
+            - datavol
+        ports:
+            - 80:80
+            - 8888:8888
+        hostname: apache
+        dns: 127.0.0.1
+        command: supervisord
+    php55:
+        build: images/php55
+        volumes_from:
+            - datavol
+        links:
+            - mysql
+        command: php-fpm -F
+        hostname: php55
+    php56:
+        build: images/php56
+        volumes_from:
+            - datavol
+        links:
+            - mysql
+        command: php-fpm -F
+        hostname: php56
+    php70:
+        build: images/php70
+        volumes_from:
+            - datavol
+        links:
+            - mysql
+        command: php-fpm -F
+        hostname: php70
+    datavol:
+        build: images/data
+        volumes:
+            - /Users/rmelo/work/docker/php-dublin/sites:/var/www/html
+        hostname: datavol
+    mysql:
+        image: mysql:5.6
+        hostname: mysql
+        environment:
+          - MYSQL_ROOT_PASSWORD=root
+        ports:
+            - 3306:3306
